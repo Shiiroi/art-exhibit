@@ -42,7 +42,7 @@ const Section6 = React.forwardRef(({ progress = 0 }, ref) => {
         data-section6
         style={{
           width: "100vw",
-          height: "200vh", // Reduced slightly from 300vh
+          height: "100vh", // Reduced slightly from 300vh
           background: "transparent",
           position: "relative",
         }}

@@ -12,6 +12,7 @@ import CloudOverlay from "../components/CloudOverlay";
 import CustomCursor from "../components/CustomCursor";
 import FloodBackground from "../components/FloodBackground";
 import RainBackdrop from "../components/RainBackdrop";
+import TopRightActions from "../components/TopRightActions";
 
 const HomePage = () => {
   const section1Ref = useRef(null);
@@ -28,81 +29,154 @@ const HomePage = () => {
   const [floodActive, setFloodActive] = useState(false);
 
   const [cloudProgress, setCloudProgress] = useState(0);
-  const [cursorIntensity, setCursorIntensity] = useState(0.8);
-  const [rainVisible, setRainVisible] = useState(false);
-  const [floodProgress, setFloodProgress] = useState(0);
-  const [section5Visible, setSection5Visible] = useState(0);
   const [section6FadeProgress, setSection6FadeProgress] = useState(0);
-  const [section7Visible, setSection7Visible] = useState(false);
-  const [section8Visible, setSection8Visible] = useState(false);
 
-  // Blinking effect for Section 7
+  // Track if we've scrolled past trigger sections
+  const [passedSection2, setPassedSection2] = useState(false);
+  const [passedSection3, setPassedSection3] = useState(false);
+  const [passedSection4, setPassedSection4] = useState(false);
+
+  // Track if we've reached Section 8 or beyond
+  const [passedSection8, setPassedSection8] = useState(false);
+
+  // New state for effects reset
+  const [effectsReset, setEffectsReset] = useState(false);
+
+  // --- CURSOR INTENSITY STATE (for blinking and dimming) ---
+  const [cursorIntensity, setCursorIntensity] = useState(0.8); // 0.8 = bright, decrements by 0.1 per section
+
+  // --- BLINKING EFFECT FOR SECTION 7 ---
   useEffect(() => {
     let blinkInterval;
-
-    if (section7Visible) {
-      blinkInterval = setInterval(() => {
-        setCursorIntensity((prev) => (prev === 0.3 ? 0.05 : 0.3));
-      }, 250);
-    }
-
-    return () => {
-      if (blinkInterval) clearInterval(blinkInterval);
+    // Only blink if Section 7 is visible and overlays are not reset
+    const handleBlink = () => {
+      setCursorIntensity((prev) => (prev === 0.3 ? 0.05 : 0.3));
     };
-  }, [section7Visible]);
+    // Section 7 visibility logic
+    const checkSection7 = () => {
+      if (!effectsReset && section7Ref.current) {
+        const rect = section7Ref.current.getBoundingClientRect();
+        const windowHeight = window.innerHeight;
+        const sectionHeight = rect.height || (rect.bottom - rect.top);
+        const visibleHeight = Math.max(0, Math.min(windowHeight, rect.bottom) - Math.max(0, rect.top));
+        const visibleRatio = visibleHeight / sectionHeight;
+        if (visibleRatio > 0.3) {
+          if (!blinkInterval) {
+            blinkInterval = setInterval(handleBlink, 250);
+          }
+          // Dimmer in Section 7
+          setCursorIntensity(0.3);
+        } else {
+          if (blinkInterval) {
+            clearInterval(blinkInterval);
+            blinkInterval = null;
+          }
+          setCursorIntensity(0.9); // Restore to bright when leaving Section 7
+        }
+      } else {
+        if (blinkInterval) {
+          clearInterval(blinkInterval);
+          blinkInterval = null;
+        }
+        setCursorIntensity(0.9);
+      }
+    };
+    window.addEventListener("scroll", checkSection7, { passive: true });
+    checkSection7();
+    return () => {
+      window.removeEventListener("scroll", checkSection7);
+      if (blinkInterval) clearInterval(blinkInterval);
+      setCursorIntensity(0.9);
+    };
+  }, [effectsReset]);
+
+  // --- DIM CURSOR WHEN SCROLLING TO SECTION 8+ ---
+  useEffect(() => {
+    if (passedSection8 && !effectsReset) {
+      setCursorIntensity(0); // Dead bulb
+    } else if (!effectsReset) {
+      setCursorIntensity(0.9); // Restore to bright if reset
+    }
+  }, [passedSection8, effectsReset]);
+
+  // --- DIM CURSOR ON FIRST SCROLL DOWN AND EACH SECTION PASSED ---
+  useEffect(() => {
+    // List of refs for sections to track
+    const sectionRefs = [section1Ref, section2Ref, section3Ref, section4Ref, section5Ref, section6Ref];
+    const handleDim = () => {
+      if (effectsReset || passedSection8) return;
+      
+      let sectionsPassedCount = 0;
+      const windowHeight = window.innerHeight;
+      
+      sectionRefs.forEach((ref) => {
+        if (ref.current) {
+          const rect = ref.current.getBoundingClientRect();
+          // If section is above the viewport (passed), increment count
+          if (rect.bottom < windowHeight * 0.3) {
+            sectionsPassedCount += 1;
+          }
+        }
+      });
+      
+      // Start at 0.8, decrement by 0.1 for each section passed, min 0.1
+      const newIntensity = Math.max(0.1, 0.8 - sectionsPassedCount * 0.1);
+      setCursorIntensity(newIntensity);
+    };
+    window.addEventListener("scroll", handleDim, { passive: true });
+    handleDim();
+    return () => window.removeEventListener("scroll", handleDim);
+  }, [effectsReset, passedSection8]);
 
   useEffect(() => {
     const handleScroll = () => {
       const windowHeight = window.innerHeight;
+      const scrollY = window.scrollY;
 
-      // Section refs for determining current section
-      const sectionRefs = [
-        section1Ref,
-        section2Ref,
-        section3Ref,
-        section4Ref,
-        section5Ref,
-        section6Ref,
-        section7Ref,
-        section8Ref,
-      ];
+      // Get positions of trigger sections
+      const section2Top = section2Ref.current?.offsetTop || Infinity;
+      const section3Top = section3Ref.current?.offsetTop || Infinity;
+      const section4Top = section4Ref.current?.offsetTop || Infinity;
 
-      let maxVisible = 0;
-      let currentSection = 0;
+      // Check if we've passed each trigger section
+      const isPastSection2 = scrollY + windowHeight / 2 >= section2Top;
+      const isPastSection3 = scrollY + windowHeight / 2 >= section3Top;
+      const isPastSection4 = scrollY + windowHeight / 2 >= section4Top;
 
-      sectionRefs.forEach((ref, idx) => {
-        if (ref.current) {
-          const rect = ref.current.getBoundingClientRect();
-          const sectionHeight = rect.height || (rect.bottom - rect.top);
-          const visibleHeight = Math.max(
-            0,
-            Math.min(windowHeight, rect.bottom) - Math.max(0, rect.top)
-          );
-          const visibleRatio = visibleHeight / sectionHeight;
-          if (visibleRatio > maxVisible) {
-            maxVisible = visibleRatio;
-            currentSection = idx;
-          }
-        }
-      });
+      // Update our "passed section" states
+      if (isPastSection2) setPassedSection2(true);
+      if (!isPastSection2 && passedSection2) setPassedSection2(false);
 
-      // Cloud: appears at Section 2 and stays until you scroll back above Section 2
-      setCloudActive(currentSection >= 1);
+      if (isPastSection3) setPassedSection3(true);
+      if (!isPastSection3 && passedSection3) setPassedSection3(false);
 
-      // Rain: appears at Section 3 and stays until you scroll back above Section 3
-      setRainActive(currentSection >= 2);
+      if (isPastSection4) setPassedSection4(true);
+      if (!isPastSection4 && passedSection4) setPassedSection4(false);
 
-      // Flood: appears at Section 4 and stays until you scroll back above Section 4
-      setFloodActive(currentSection >= 3);
+      // Keep effects active once we've passed their sections
+      setCloudActive(passedSection2);
+      setRainActive(passedSection3);
+      setFloodActive(passedSection4);
 
-      // Section 7 visibility
-      setSection7Visible(currentSection === 6);
-
-      // Cursor intensity for sections 1-6
-      if (currentSection < 6) {
-        const intensityBySection = [0.8, 0.7, 0.6, 0.5, 0.4, 0.3];
-        setCursorIntensity(intensityBySection[currentSection]);
-      }
+      // Section refs for determining current section (for other effects)
+      // (Removed: currentSection, section7Vis)
+      // let maxVisible = 0;
+      // let currentSection = 0;
+      // sectionRefs.forEach((ref, idx) => {
+      //   if (ref.current) {
+      //     const rect = ref.current.getBoundingClientRect();
+      //     const sectionHeight = rect.height || (rect.bottom - rect.top);
+      //     const visibleHeight = Math.max(
+      //       0,
+      //       Math.min(windowHeight, rect.bottom) - Math.max(0, rect.top)
+      //     );
+      //     const visibleRatio = visibleHeight / sectionHeight;
+      //     if (visibleRatio > maxVisible) {
+      //       maxVisible = visibleRatio;
+      //       currentSection = idx;
+      //     }
+      //   }
+      // });
 
       // Cloud overlay progress (for fade-in effect)
       if (section2Ref.current) {
@@ -114,36 +188,8 @@ const HomePage = () => {
       }
 
       // Rain visible on Section 3 or any part of Section 4 (for animation, not for persistence)
-      let rainAnim = false;
-      if (section3Ref.current && section4Ref.current) {
-        const s3 = section3Ref.current.getBoundingClientRect();
-        const s4 = section4Ref.current.getBoundingClientRect();
-        const section3Height = s3.height || (s3.bottom - s3.top);
-        const visibleHeight3 = Math.max(0, Math.min(windowHeight, s3.bottom) - Math.max(0, s3.top));
-        const section4InView = s4.bottom > 0 && s4.top < windowHeight;
-        rainAnim = (visibleHeight3 / section3Height) >= 0.7 || section4InView;
-      }
-      setRainVisible(rainAnim);
-
       // Flood progress (for animation, not for persistence)
-      let floodProg = 0;
-      if (section4Ref.current) {
-        const s4 = section4Ref.current.getBoundingClientRect();
-        const sectionHeight = s4.height || (s4.bottom - s4.top);
-        const visibleHeight = Math.max(0, Math.min(windowHeight, s4.bottom) - Math.max(0, s4.top));
-        floodProg = (visibleHeight / sectionHeight) >= 0.7 ? 1 : 0;
-      }
-      setFloodProgress(floodProg);
-
       // Section 5 visibility
-      let section5Vis = 0;
-      const section5 = document.querySelector('[data-section5]');
-      if (section5) {
-        const rect = section5.getBoundingClientRect();
-        const sectionHeight = rect.height || (rect.bottom - rect.top);
-        const visibleHeight = Math.max(0, Math.min(windowHeight, rect.bottom) - Math.max(0, rect.top));
-        section5Vis = visibleHeight / sectionHeight;
-      }
       // Section 6 visibility
       let section6Vis = 0;
       const section6 = document.querySelector('[data-section6]');
@@ -154,18 +200,7 @@ const HomePage = () => {
         section6Vis = visibleHeight / sectionHeight;
       }
 
-      // Section 7 visibility
-      let section7Vis = 0;
-      const section7 = document.querySelector('[data-section7]');
-      if (section7) {
-        const rect = section7.getBoundingClientRect();
-        const sectionHeight = rect.height || (rect.bottom - rect.top);
-        const visibleHeight = Math.max(0, Math.min(windowHeight, rect.bottom) - Math.max(0, rect.top));
-        section7Vis = visibleHeight / sectionHeight;
-        setSection7Visible(section7Vis > 0.3);
-      }
-
-      // Section 8 visibility
+      // Section 8 visibility - once we've seen it, keep the cursor dead
       let section8Vis = 0;
       const section8 = document.querySelector('[data-section8]');
       if (section8) {
@@ -173,29 +208,57 @@ const HomePage = () => {
         const sectionHeight = rect.height || (rect.bottom - rect.top);
         const visibleHeight = Math.max(0, Math.min(windowHeight, rect.bottom) - Math.max(0, rect.top));
         section8Vis = visibleHeight / sectionHeight;
-        setSection8Visible(section8Vis > 0.3);
+        
+        // If we pass section 8, set passedSection8 to true permanently
+        if (section8Vis > 0.3) {
+          setPassedSection8(true);
+        }
       }
 
-      setSection5Visible(section5Vis >= 0.5 || section6Vis > 0 ? 1 : 0);
       setSection6FadeProgress(Math.max(0, Math.min(1, section6Vis)));
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [passedSection2, passedSection3, passedSection4]);
+
+  // Add this reset function
+  const resetEnvironment = () => {
+    setEffectsReset(true);
+    setCloudActive(false);
+    setRainActive(false);
+    setFloodActive(false);
+    setPassedSection8(false); // Re-enable the bright cursor
+    setCursorIntensity(0.8); // Restore to bright
+  };
+
+  // Handlers for TopRightActions
+  const handleRetry = () => {
+    setEffectsReset(false);
+    setCloudActive(false);
+    setRainActive(false);
+    setFloodActive(false);
+    setPassedSection8(false);
+    setCursorIntensity(0.8);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleHelp = () => {
+    alert("Help is on the way! (You can customize this action.)");
+  };
 
   return (
     <div className="min-h-screen w-full relative overflow-hidden bg-black">
       <CustomCursor
-        lightIntensity={section8Visible ? 0 : cursorIntensity}
-        lightColor={section8Visible ? "#888" : "#fffbe6"}
-        dead={section8Visible}
+        lightIntensity={cursorIntensity}
+        lightColor={passedSection8 && !effectsReset ? "#888" : "#fffbe6"}
+        dead={passedSection8 && !effectsReset}
       />
       {/* Cloud, Rain, and Flood overlays persist from their section onward */}
-      <CloudOverlay progress={cloudActive ? cloudProgress : 0} />
-      <RainBackdrop visible={rainActive} />
-      <FloodBackground progress={floodActive ? 1 : 0} />
+      <CloudOverlay progress={cloudActive && !effectsReset ? cloudProgress : 0} />
+      <RainBackdrop visible={rainActive && !effectsReset} />
+      <FloodBackground progress={floodActive && !effectsReset ? 1 : 0} />
       <Section1 ref={section1Ref} />
       <Section2 ref={section2Ref} />
       <Section3 ref={section3Ref} />
@@ -204,7 +267,8 @@ const HomePage = () => {
       <Section6 ref={section6Ref} progress={section6FadeProgress} />
       <Section7 ref={section7Ref} />
       <Section8 ref={section8Ref} />
-      <Section9 />
+      <Section9 onReset={resetEnvironment} />
+      <TopRightActions visible={effectsReset} onRetry={handleRetry} onHelp={handleHelp} />
     </div>
   );
 };

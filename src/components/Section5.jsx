@@ -7,7 +7,7 @@ const Section5 = React.forwardRef((props, ref) => {
       data-section5
       style={{
         width: "100vw",
-        height: "120vh", // Increased from 100vh to 200vh
+        height: "100vh", 
         background: "rgba(0,0,0,0.7)",
       }}
     />
