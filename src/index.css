@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+:root {
+  scrollbar-color: color-mix(in oklch, currentColor 35%, #0000) #0000;
+}
+
+.flood-svg-container {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 200px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.flood-wave1 {
+  fill: #1f272e;
+  opacity: 0.8;
+}
+.flood-wave2 {
+  fill: #35353fb5;
+  opacity: 0.6;
+}
+.flood-wave2 {
+  fill: #2a2f33b5;
+  opacity: 0.6;
+}
+
+.rain {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10;
+  overflow: hidden;
+}
+.rain-drop {
+  position: absolute;
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(180deg, #fff 0%, #aeeaff 100%);
+  opacity: 0.2;
+  border-radius: 1px;
+  animation: rain-fall-diagonal 1s linear infinite;
+}
+
+@keyframes rain-fall-diagonal {
+  0% {
+    transform: rotate(-15deg) translateY(0) translateX(0);
+    opacity: 0.2;
+  }
+  80% {
+    opacity: 0.2;
+  }
+  100% {
+    transform: rotate(-15deg) translateY(110vh) translateX(30px);
+    opacity: 0;
+  }
+}
