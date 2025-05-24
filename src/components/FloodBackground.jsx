@@ -1,4 +1,4 @@
-const FloodBackground = ({ progress = 0 }) => (
+const FloodBackground = ({ progress = 0, animationDuration = 4 }) => (
   <div
     className="flood-svg-container"
     style={{
@@ -12,7 +12,7 @@ const FloodBackground = ({ progress = 0 }) => (
       position: "fixed",
       opacity: progress,
       transform: `translateY(${30 * (1 - progress)}px)`,
-      transition: "opacity 0.7s cubic-bezier(.4,2,.6,1), transform 0.7s cubic-bezier(.4,2,.6,1)",
+      transition: `opacity ${animationDuration}s cubic-bezier(.4,2,.6,1), transform ${animationDuration}s cubic-bezier(.4,2,.6,1)`,
     }}
   >
     <svg
