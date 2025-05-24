@@ -10,8 +10,8 @@ const Section8_3 = React.forwardRef((props, ref) => (
       {/* IMAGE LEFT */}
       
       <img
-        src="https://pbs.twimg.com/media/Emn_ti6U8AUL0ve?format=jpg&name=medium"
-        alt="Community working together to move a house"
+        src="/power.jpg"
+        alt="artwork"
         className="max-w-[480px] max-h-[65vh] rounded-xl shadow-[0_0_12px_rgba(0,0,0,0.2)]"
       />
       {/* TEXT RIGHT */}

@@ -8,13 +8,13 @@ const images = [
       "TIME's top 10 photo of 2013. Taken by Agence France-Presse. The photo captures the strong religious belief of Filipinos. However, seen in the background is the devastation of the typhoon Yolanda.",
   },
   {
-    src: "https://scontent.fmnl3-4.fna.fbcdn.net/v/t39.30808-6/487999289_1211450337222497_2886091924358709083_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=833d8c&_nc_ohc=D5EF_8PM42IQ7kNvwEdBKu2&_nc_oc=AdnPfp3HFwWvSTm30W9fQRNEhyfYNceeX7uVCqzs-YTme2Ew4h9tQx1NhOy1Ic1xZLQ&_nc_zt=23&_nc_ht=scontent.fmnl3-4.fna&_nc_gid=JkRoU1eebhg34STEFrRynw&oh=00_AfICKR7u8zA-7xPjTf17kEL2YyQF95BnUIJi9goMAcU0oQ&oe=683649F6",
+    src: "/malapitan.jpg",
     caption: "This is where your taxes go!",
     description:
     "The photo speaks for itself.",
   },
   {
-    src: "https://images.gmanews.tv/webpics/2020/11/2020-11-12T234101Z_148202793_RC2Z1K9GQH3E_RTRMADP_3_ASIA-STORM-PHILIPPINES_2020_11_13_18_49_26_0.JPG",
+    src: "/aerial.JPG",
     caption: "Ulysses Aftermath",
     description:
       "A flood in Manila cause by Typhoon Ulysses. The capital of the Philippines.",

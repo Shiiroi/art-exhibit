@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState, forwardRef } from "react";
 
 const images = [
-  "https://media.philstar.com/images/articles/floods_2018-07-17_21-41-41.jpg",
-  "https://sa.kapamilya.com/absnews/abscbnnews/media/2020/news/11/12/20201112-typhoon-ulysses-pnp-rescue-afp-s.jpg",
-  "https://assets.grab.com/wp-content/uploads/sites/12/2024/07/29150743/PHOTO-RELEASE-GrabBayanihan-1-1536x1024.jpg",
-  "https://scontent.fmnl25-1.fna.fbcdn.net/v/t1.6435-9/43331129_2146271855392009_3910059074326102016_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=127cfc&_nc_ohc=Yr-uBEe4Ue8Q7kNvwEQPwPJ&_nc_oc=Adn9MBgjx5Qk-Wd7MivIWK4wRRyFHWmMtQLJmZ8DS1EkXZlrY85gTNRa6u3iCTwHOM0&_nc_zt=23&_nc_ht=scontent.fmnl25-1.fna&_nc_gid=C0wIh5Zgd7nTHR7_7DKDyA&oh=00_AfKBWcYeiPn1DWP44-kpxNwF9t56ObBeIat85wdQlo-cpA&oe=68564C01",
-  "https://jefmenguin.com/wp-content/uploads/2021/07/bayanihan.jpg",
+  "/boat1.jpg",
+  "/boat2.jpg",
+  "/relief1.jpg",
+  "/relief2.jpg",
+  "/bayanihan1.jpg",
 ];
 
 const Section4 = forwardRef((props, ref) => {

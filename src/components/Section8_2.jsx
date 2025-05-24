@@ -9,8 +9,8 @@ const Section8_2 = React.forwardRef((props, ref) => (
     <div className="flex items-center justify-center gap-8">
       {/* IMAGE LEFT */}
       <img
-        src="https://scontent.fmnl3-1.fna.fbcdn.net/v/t1.6435-9/124871536_1202957220100515_894879013705557645_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=833d8c&_nc_ohc=e00h1TtSicAQ7kNvwEoNW0b&_nc_oc=AdlY1LM_0FJn5BssoJF0QkGP-82n40ahgM-nL5GyLMmrTmgnAM3MblOQq7DtMv-k_Y8&_nc_zt=23&_nc_ht=scontent.fmnl3-1.fna&_nc_gid=zl-TAUNdmRSg_lMZthHRgw&oh=00_AfLdg2YIl3b598YED7Gcizsi0nuOt2mxcsRuuz8yB__P4w&oe=68588CA6"
-        alt="Flooded street with people helping each other"
+        src="/kalbo.jpg"
+        alt="Dog on top of roof during a flood"
         className="max-w-[480px] max-h-[65vh] rounded-xl shadow-[0_0_12px_rgba(0,0,0,0.2)]"
       />
       {/* TEXT RIGHT */}

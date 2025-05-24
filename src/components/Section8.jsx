@@ -10,7 +10,7 @@ const Section8 = React.forwardRef((props, ref) => (
     <div className="flex items-center justify-center gap-8">
       {/* IMAGE LEFT */}
       <img
-        src="https://philippinereporter.com/wp-content/uploads/2020/11/Resilience-Art-by-Kelly-Ronveaux--636x659.jpg"
+        src="/resilience.jpg"
         alt="Community rebuilding after disaster"
         className="max-w-[480px] max-h-[65vh] rounded-xl shadow-[0_0_12px_rgba(0,0,0,0.2)]"
       />

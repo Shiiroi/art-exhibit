@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useState, forwardRef } from "react";
 
 const images = [
-  "https://steemitimages.com/0x0//https://steemitimages.com/DQmVPAFRh8XF1vR5ZT43YvzpHqxA2eYFawCLdHbzM6eD3Nf/FB_IMG_1505230269517.jpg",
-  "https://barokandtakya.com/wp-content/uploads/2020/11/resilient-in-filipino-still-playing-basketball-in-flood.jpg",
-  "https://steemitimages.com/0x0//https://steemitimages.com/DQmc1swrMfNUMDPCyS8T7Mo3fCqLJGHXyZnVE1Kuv9tBbfL/FB_IMG_1505230232707.jpg",
-  "https://steemitimages.com/0x0//https://steemitimages.com/DQmci68MTPhLTH7eWuisyAaRN6GkonLk92psr249t2jHWtX/FB_IMG_1505230238960.jpg",
-  "https://steemitimages.com/0x0//https://steemitimages.com/DQmaN4N4x7PVk2XfDY94XxE8A9HmBzTpTC8czWigMWXLtEv/FB_IMG_1505230227376.jpg",
+  "/kasal.png",
+  "/bbal.png",
+  "/vball.jpg",
+  "/trip.png",
+  "/dive.jpg",
 ];
 
 const Section3 = forwardRef((props, ref) => {
